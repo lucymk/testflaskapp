@@ -10,7 +10,7 @@ from image_watermark import add_watermark
 application = Flask(__name__)
 CORS(application)
 application.config.from_mapping(
-    UPLOAD_FOLDER='efs',
+    UPLOAD_FOLDER='/efs',
     ALLOWED_EXTENSIONS=set(['png', 'jpg', 'jpeg'])
 )
 application.debug = True
@@ -22,7 +22,7 @@ def allowed_file(filename):
 
 @application.route('/', methods=['GET'])
 def hello():
-    return Response("Foo bar baz")
+    return Response("Foo bar baz12323")
 
 
 @application.route('/upload', methods=['GET', 'POST'])
