@@ -1,4 +1,5 @@
 from flask import (Flask, Response, request, jsonify)
+from flask_cors import CORS
 
 import os
 from werkzeug.utils import secure_filename
@@ -7,6 +8,11 @@ from image_convert import convert_to_base64
 from image_watermark import add_watermark
 
 application = Flask(__name__)
+CORS(application)
+application.config.from_mapping(
+    UPLOAD_FOLDER='uploads',
+    ALLOWED_EXTENSIONS=set(['png', 'jpg', 'jpeg'])
+)
 application.debug = True
 
 
@@ -16,40 +22,33 @@ def allowed_file(filename):
 
 @application.route('/', methods=['GET'])
 def hello():
-    resp = Response("Foo bar baz")
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    return Response("Foo bar baz")
 
 
 @application.route('/upload', methods=['GET', 'POST'])
 def upload():
+
+    if request.method == 'GET':
+        return Response("I'm here!")
+
     if request.method == 'POST':
         if 'file' not in request.files:
-            resp = Response("You didn't send the file.")
-            resp.headers['Access-Control-Allow-Origin'] = '*'
-            return resp
+            return Response("You didn't send any file.")
 
         file = request.files['file']
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            path = os.path.join(
-                application.instance_path, application.config['UPLOAD_FOLDER'], filename)
-            print(path)
-            print("Going to upload the file now!")
+            path = os.path.join(application.config['UPLOAD_FOLDER'], filename)
 
             file.save(path)
             file.close()
-            # cartoon_path = cartoonify(path)
+            # # cartoon_path = cartoonify(path)
             watermark_path = os.path.join(str(path) + "_watermark.png")
             add_watermark(str(path), os.path.join(
                 application.root_path, "eu-compliant-watermark.png"), watermark_path)
 
-            print("Going to send a response now!")
-            resp = Response(jsonify(status=200, base64=convert_to_base64(str(watermark_path)))
-                            )
-            resp.headers['Access-Control-Allow-Origin'] = '*'
-            return resp
+            return jsonify(status=200, base64=convert_to_base64(str(watermark_path)))
 
 
 if __name__ == "__main__":
