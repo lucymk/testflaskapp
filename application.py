@@ -10,7 +10,7 @@ from image_watermark import add_watermark
 application = Flask(__name__)
 CORS(application)
 application.config.from_mapping(
-    UPLOAD_FOLDER='efs/uploads',
+    UPLOAD_FOLDER='efs',
     ALLOWED_EXTENSIONS=set(['png', 'jpg', 'jpeg'])
 )
 application.debug = True
