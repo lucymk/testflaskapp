@@ -55,8 +55,9 @@ def upload():
 @application.route("/airplane")
 def airplane():
     path = os.path.join("", "airplane.bin")
+    abspath = os.path.abspath(path)
     if os.path.isfile(path):
-        return "TRUE"
+        return str(abspath)
     else:
         return "FALSE"
 
