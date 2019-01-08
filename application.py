@@ -9,20 +9,32 @@ from image_watermark import add_watermark
 
 from test_download import download
 
+from pathlib import Path
+
 application = Flask(__name__)
 CORS(application)
 application.config.from_mapping(
     UPLOAD_FOLDER='/efs',
+    DATASET_FOLDER='downloads/drawing_dataset',
     ALLOWED_EXTENSIONS=set(['png', 'jpg', 'jpeg'])
 )
 application.debug = True
 
-# run file setup here
-download("https://storage.googleapis.com/quickdraw_dataset/full/binary/airplane.bin", "airplane.bin", "downloads")
+if not Path(application.config["DATASET_FOLDER"]).exists():
+        Path(application.config["DATASET_FOLDER"]).mkdir(parents=True)
+
+files = Path("downloads", "drawing_dataset").glob('*.bin')
+categories = [f.stem for f in files]
+
+if not categories:
+    category_list = ["aircraft carrier", "airplane", "alarm clock"]
+    source = "https://storage.googleapis.com/quickdraw_dataset/full/binary/"
+    for category in category_list:
+        application.logger.info("Downloading dataset file: %s", category)
+        download(source + category + ".bin", category + ".bin", application.config["DATASET_FOLDER"])
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in application.config['ALLOWED_EXTENSIONS']
-
 
 @application.route('/', methods=['GET'])
 def hello():
