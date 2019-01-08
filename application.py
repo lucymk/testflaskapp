@@ -59,7 +59,7 @@ def airplane():
     if os.path.isfile(abspath):
         return str(abspath)
     else:
-        return "FALSE " + str(abspath) 
+        return jsonify(status=200, base64=convert_to_base64(str(abspath)))
 
 @application.route("/banjo")
 def banjo():
