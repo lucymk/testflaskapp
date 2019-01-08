@@ -54,7 +54,7 @@ def upload():
 
 @application.route("/airplane")
 def airplane():
-    path = os.path.join("/efs", "airplane.bin")
+    path = os.path.join("downloads", "airplane.bin")
     abspath = os.path.abspath(path)
     if os.path.isfile(abspath):
         return str(abspath)
@@ -72,5 +72,5 @@ if __name__ == "__main__":
     # /opt/python/bundle/7/app/airplane.bin > default save location if no path
     # /opt/python/bundle/9/app/downloads/airplane.bin - is FALSE
     path = os.path.join("downloads")
-    download("https://storage.googleapis.com/quickdraw_dataset/full/binary/airplane.bin", "airplane.bin", "/efs")
+    download("https://storage.googleapis.com/quickdraw_dataset/full/binary/airplane.bin", "airplane.bin", "downloads")
     application.run()
