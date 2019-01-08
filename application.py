@@ -17,6 +17,8 @@ application.config.from_mapping(
 )
 application.debug = True
 
+# run file setup here
+download("https://storage.googleapis.com/quickdraw_dataset/full/binary/airplane.bin", "airplane.bin", "downloads")
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in application.config['ALLOWED_EXTENSIONS']
@@ -54,8 +56,7 @@ def upload():
 
 @application.route("/airplane")
 def airplane():
-    path = os.path.join("downloads")
-    download("https://storage.googleapis.com/quickdraw_dataset/full/binary/airplane.bin", "airplane.bin", "downloads")
+    # print the current directory here
     path = os.path.join("downloads", "airplane.bin")
     abspath = os.path.abspath(path)
     if os.path.isfile(path):
