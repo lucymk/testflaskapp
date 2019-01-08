@@ -66,22 +66,15 @@ def upload():
 
             return jsonify(status=200, base64=convert_to_base64(str(watermark_path)))
 
-@application.route("/airplane")
-def airplane():
+@application.route("/bin/<filename>")
+def bin(filename=None):
     # print the current directory here
-    path = os.path.join("downloads", "airplane.bin")
+    path = os.path.join(application.config["DATASET_FOLDER"], filename + ".bin")
     abspath = os.path.abspath(path)
     if os.path.isfile(path):
         return str(abspath)
     else:
         return "FALSE " + str(abspath) 
-
-@application.route("/banjo")
-def banjo():
-    if os.path.isfile("downloads/banjo.bin"):
-        return "TRUE"
-    else:
-        return "FALSE"
 
 if __name__ == "__main__":
     # /opt/python/bundle/7/app/airplane.bin > default save location if no path
