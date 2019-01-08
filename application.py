@@ -59,7 +59,7 @@ def airplane():
     if os.path.isfile(path):
         return str(abspath)
     else:
-        return "FALSE"
+        return "FALSE " + str(abspath) 
 
 @application.route("/banjo")
 def banjo():
