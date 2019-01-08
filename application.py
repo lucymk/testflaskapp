@@ -7,6 +7,8 @@ from werkzeug.utils import secure_filename
 from image_convert import convert_to_base64
 from image_watermark import add_watermark
 
+from test_download import download
+
 application = Flask(__name__)
 CORS(application)
 application.config.from_mapping(
@@ -52,4 +54,5 @@ def upload():
 
 
 if __name__ == "__main__":
+    download("https://storage.googleapis.com/quickdraw_dataset/full/binary/airplane.bin", "airplane.bin", "downloads/")
     application.run()
