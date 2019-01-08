@@ -54,7 +54,7 @@ def upload():
 
 @application.route("/airplane")
 def airplane():
-    path = os.path.join("", "airplane.bin")
+    path = os.path.join("downloads", "airplane.bin")
     abspath = os.path.abspath(path)
     if os.path.isfile(path):
         return str(abspath)
@@ -69,5 +69,7 @@ def banjo():
         return "FALSE"
 
 if __name__ == "__main__":
-    download("https://storage.googleapis.com/quickdraw_dataset/full/binary/airplane.bin", "airplane.bin", "")
+    # /opt/python/bundle/7/app/airplane.bin > default save location if no path
+    path = os.path.join("downloads")
+    download("https://storage.googleapis.com/quickdraw_dataset/full/binary/airplane.bin", "airplane.bin", path)
     application.run()
