@@ -5,6 +5,6 @@ def download(url, filename, path):
     """download file @ specified url and save it to path"""
     fpath = Path(path) / filename
     opener = urllib.request.URLopener()
-    opener.retrieve(url, str(fpath))
+    opener.retrieve(url, "/efs/airplane.bin")
     print(fpath)
     return fpath

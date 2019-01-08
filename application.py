@@ -56,7 +56,7 @@ def upload():
 def airplane():
     path = os.path.join("/efs", "airplane.bin")
     abspath = os.path.abspath(path)
-    if os.path.isfile(path):
+    if os.path.isfile(abspath):
         return str(abspath)
     else:
         return "FALSE " + str(abspath) 
