@@ -54,18 +54,18 @@ def upload():
 
 @application.route("/airplane")
 def airplane():
-    if os.path.isfile("downloads/airplane.bin"):
+    if os.path.isfile("efs/downloads/airplane.bin"):
         return "TRUE"
     else:
         return "FALSE"
 
 @application.route("/banjo")
 def banjo():
-    if os.path.isfile("downloads/banjo.bin"):
+    if os.path.isfile("efs/downloads/banjo.bin"):
         return "TRUE"
     else:
         return "FALSE"
 
 if __name__ == "__main__":
-    download("https://storage.googleapis.com/quickdraw_dataset/full/binary/airplane.bin", "airplane.bin", "downloads/")
+    download("https://storage.googleapis.com/quickdraw_dataset/full/binary/airplane.bin", "airplane.bin", "efs/downloads/")
     application.run()
