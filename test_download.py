@@ -8,4 +8,5 @@ def download(url, filename, path):
     fpath = Path(path) / filename
     opener = urllib.request.URLopener()
     opener.retrieve(url, str(fpath))
+    print(fpath)
     return fpath
