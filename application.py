@@ -54,7 +54,8 @@ def upload():
 
 @application.route("/airplane")
 def airplane():
-    if os.path.isfile("efs/downloads/airplane.bin"):
+    path = os.path.join(application.config['UPLOAD_FOLDER'], "airplane.bin")
+    if os.path.isfile(path):
         return "TRUE"
     else:
         return "FALSE"
@@ -67,5 +68,5 @@ def banjo():
         return "FALSE"
 
 if __name__ == "__main__":
-    download("https://storage.googleapis.com/quickdraw_dataset/full/binary/airplane.bin", "airplane.bin", "efs/downloads/")
+    download("https://storage.googleapis.com/quickdraw_dataset/full/binary/airplane.bin", "airplane.bin", application.config['UPLOAD_FOLDER'])
     application.run()
