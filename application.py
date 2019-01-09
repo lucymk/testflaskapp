@@ -5,14 +5,15 @@ from werkzeug.utils import secure_filename
 from image_convert import convert_to_base64
 from image_watermark import add_watermark
 from get_dataset import Dataset
+from cartoonify import cartoonify
 
 
 application = Flask(__name__)
 CORS(application)
 application.config.from_mapping(
-    UPLOAD_FOLDER='/efs',
-    MODEL_FOLDER='/efs/downloads/detection_models/ssd_mobilenet_v1_coco_2017_11_17',
-    DATASET_FOLDER='/efs/downloads/drawing_dataset',
+    UPLOAD_FOLDER='uploads',
+    MODEL_FOLDER='downloads/detection_models/ssd_mobilenet_v1_coco_2017_11_17',
+    DATASET_FOLDER='downloads/drawing_dataset',
     ALLOWED_EXTENSIONS=set(['png', 'jpg', 'jpeg'])
 )
 application.debug = True
@@ -49,9 +50,10 @@ def upload():
 
             file.save(path)
             file.close()
-            # # cartoon_path = cartoonify(path)
-            watermark_path = os.path.join(str(path) + "_watermark.png")
-            add_watermark(str(path), os.path.join(
+            cartoon_path = cartoonify(
+                path, application.config["DATASET_FOLDER"], application.config["MODEL_FOLDER"])
+            watermark_path = os.path.join(str(cartoon_path) + "_watermark.png")
+            add_watermark(str(cartoon_path), os.path.join(
                 application.root_path, "eu-compliant-watermark.png"), watermark_path)
 
             return jsonify(status=200, base64=convert_to_base64(str(watermark_path)))

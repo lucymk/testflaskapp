@@ -1,4 +1,5 @@
 env/
+uploads/
 
 .vscode
 # Elastic Beanstalk Files

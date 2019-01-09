@@ -7,7 +7,8 @@ import six.moves.urllib as urllib
 
 class Dataset(object):
     def __init__(self, model_folder, dataset_folder, categories_list, logging):
-        self.model_folder = model_folder
+        self.model_folder = os.path.join(
+            model_folder, "frozen_inference_graph.pb")
         self.dataset_folder = dataset_folder
         self.categories_list = categories_list
         self.logging = logging
@@ -25,7 +26,7 @@ class Dataset(object):
                 Path(dir).mkdir(parents=True)
 
     def check_model(self):
-        if not os.path.isfile(os.path.join(self.model_folder, "frozen_inference_graph.pb")):
+        if not os.path.isfile(self.model_folder):
             url = "http://download.tensorflow.org/models/object_detection/"
             filename = "ssd_mobilenet_v1_coco_2017_11_17.tar.gz"
             self.logging.info("Downloading model file: %s", filename)
