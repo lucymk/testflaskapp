@@ -11,17 +11,34 @@ from test_download import download
 
 from pathlib import Path
 
+import six.moves.urllib as urllib
+import tarfile
+
 application = Flask(__name__)
 CORS(application)
 application.config.from_mapping(
     UPLOAD_FOLDER='/efs',
-    DATASET_FOLDER='downloads/drawing_dataset',
+    MODEL_FOLDER='/efs/downloads/detection_models/ssd_mobilenet_v1_coco_2017_11_17',
+    DATASET_FOLDER='efs/downloads/drawing_dataset',
     ALLOWED_EXTENSIONS=set(['png', 'jpg', 'jpeg'])
 )
 application.debug = True
 
-if not Path(application.config["DATASET_FOLDER"]).exists():
-        Path(application.config["DATASET_FOLDER"]).mkdir(parents=True)
+for dir in [application.config["MODEL_FOLDER"], application.config["DATASET_FOLDER"]]:
+    if not Path(dir).exists():
+            Path(dir).mkdir(parents=True)
+
+if not os.path.isfile(os.path.join(application.config["MODEL_FOLDER"], "frozen_inference_graph.pb")):
+    url = "http://download.tensorflow.org/models/object_detection/"
+    filename = "ssd_mobilenet_v1_coco_2017_11_17.tar.gz"
+    application.logger.info("Downloading model file: %s", filename)
+    opener = urllib.request.URLopener()
+    opener.retrieve(url + filename, filename)
+    tar_file = tarfile.open(filename)
+    for file in tar_file.getmembers():
+        file_name = os.path.basename(file.name)
+        if 'frozen_inference_graph.pb' in file_name:
+            tar_file.extract(file, path=str(Path(application.config["MODEL_FOLDER"]).parent))
 
 files = Path("downloads", "drawing_dataset").glob('*.bin')
 categories = [f.stem for f in files]
