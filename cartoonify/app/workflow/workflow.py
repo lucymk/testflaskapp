@@ -5,7 +5,9 @@ from pathlib import Path
 import logging
 from ..sketch import SketchGizeh
 import subprocess
+import time
 from csv import writer
+from random import randint
 
 
 class Workflow(object):
@@ -21,7 +23,6 @@ class Workflow(object):
         self._boxes = None
         self._classes = None
         self._scores = None
-        self.count = 0
 
     def setup(self, setup_gpio=True):
         self._logger.info('loading cartoon dataset...')
@@ -80,9 +81,8 @@ class Workflow(object):
         """
         self._logger.info('saving results...')
         cartoon_path = self._image_path.with_name(
-            'cartoon' + str(self.count) + '.png')
+            'cartoon' + str(int(time.time() * randint(1, 10))) + '.png')
         self._sketcher.save_png(cartoon_path)
-        self.count += 1
         return cartoon_path
 
     def close(self):

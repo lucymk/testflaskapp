@@ -6,6 +6,7 @@ from image_convert import convert_to_base64
 from image_watermark import add_watermark
 from get_dataset import Dataset
 from cartoonify import cartoonify
+from handle_files import hash_filename
 
 
 application = Flask(__name__)
@@ -52,9 +53,12 @@ def upload():
             file.close()
             cartoon_path = cartoonify(
                 path, application.config["DATASET_FOLDER"], application.config["MODEL_FOLDER"])
-            watermark_path = os.path.join(str(cartoon_path) + "_watermark.png")
+            watermark_path = os.path.join(
+                application.config['UPLOAD_FOLDER'], hash_filename() + ".png")
             add_watermark(str(cartoon_path), os.path.join(
                 application.root_path, "eu-compliant-watermark.png"), watermark_path)
+            os.remove(path)
+            os.remove(str(cartoon_path))
 
             return jsonify(status=200, base64=convert_to_base64(str(watermark_path)))
 
