@@ -12,9 +12,9 @@ from handle_files import hash_filename
 application = Flask(__name__)
 CORS(application)
 application.config.from_mapping(
-    UPLOAD_FOLDER='uploads',
-    MODEL_FOLDER='downloads/detection_models/ssd_mobilenet_v1_coco_2017_11_17',
-    DATASET_FOLDER='downloads/drawing_dataset',
+    UPLOAD_FOLDER='/efs/uploads',
+    MODEL_FOLDER='/efs/downloads/detection_models/ssd_mobilenet_v1_coco_2017_11_17',
+    DATASET_FOLDER='/efs/downloads/drawing_dataset',
     ALLOWED_EXTENSIONS=set(['png', 'jpg', 'jpeg'])
 )
 application.debug = True
