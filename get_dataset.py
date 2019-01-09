@@ -42,7 +42,7 @@ class Dataset(object):
             os.remove(filename)
 
     def check_binaries(self):
-        files = Path("downloads", "drawing_dataset").glob('*.bin')
+        files = Path(self.dataset_folder).glob('*.bin')
         categories = [f.stem for f in files]
 
         if not categories:
