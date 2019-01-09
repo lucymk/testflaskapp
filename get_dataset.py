@@ -6,10 +6,11 @@ import six.moves.urllib as urllib
 
 
 class Dataset(object):
-    def __init__(self, model_folder, dataset_folder, categories_list, logging):
+    def __init__(self, model_folder, dataset_folder, upload_folder, categories_list, logging):
         self.model_folder = os.path.join(
             model_folder, "frozen_inference_graph.pb")
         self.dataset_folder = dataset_folder
+        self.upload_folder = upload_folder
         self.categories_list = categories_list
         self.logging = logging
 
@@ -21,7 +22,7 @@ class Dataset(object):
         self.check_binaries()
 
     def check_paths(self):
-        for dir in [self.model_folder, self.dataset_folder]:
+        for dir in [self.model_folder, self.dataset_folder, self.upload_folder]:
             if not Path(dir).exists():
                 Path(dir).mkdir(parents=True)
 

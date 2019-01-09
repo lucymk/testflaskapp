@@ -20,7 +20,10 @@ application.config.from_mapping(
 application.debug = True
 
 dataset = Dataset(application.config['MODEL_FOLDER'],
-                  application.config["DATASET_FOLDER"], "categories.txt", logging=application.logger)
+                  application.config["DATASET_FOLDER"],
+                  application.config["UPLOAD_FOLDER"],
+                  "categories.txt",
+                  logging=application.logger)
 dataset.check()
 
 
