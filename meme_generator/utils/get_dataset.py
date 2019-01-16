@@ -1,14 +1,15 @@
 import os
 import requests
 import tarfile
-from pathlib import Path
 import six.moves.urllib as urllib
+from pathlib import Path
 
 
 class Dataset(object):
     def __init__(self, model_folder, dataset_folder, upload_folder, categories_list, logging):
-        self.model_folder = os.path.join(
-            model_folder, "frozen_inference_graph.pb")
+        self.model_folder = model_folder
+        self.model_name = "frozen_inference_graph.pb"
+        self.model_path = os.path.join(self.model_folder, self.model_name)
         self.dataset_folder = dataset_folder
         self.upload_folder = upload_folder
         self.categories_list = categories_list
@@ -24,19 +25,20 @@ class Dataset(object):
     def check_paths(self):
         for dir in [self.model_folder, self.dataset_folder, self.upload_folder]:
             if not Path(dir).exists():
+                self.logging.info("Creating folder: " + dir)
                 Path(dir).mkdir(parents=True)
 
     def check_model(self):
-        if not os.path.isfile(self.model_folder):
+        if not os.path.isfile(self.model_path):
             url = "http://download.tensorflow.org/models/object_detection/"
-            filename = "ssd_mobilenet_v1_coco_2017_11_17.tar.gz"
+            filename = self.model_folder.split("/")[-1] + ".tar.gz"
             self.logging.info("Downloading model file: %s", filename)
             opener = urllib.request.URLopener()
             opener.retrieve(url + filename, filename)
             tar_file = tarfile.open(filename)
             for file in tar_file.getmembers():
                 file_name = os.path.basename(file.name)
-                if 'frozen_inference_graph.pb' in file_name:
+                if self.model_name in file_name:
                     tar_file.extract(file, path=str(
                         Path(self.model_folder).parent))
             os.remove(filename)
@@ -74,3 +76,6 @@ class Dataset(object):
                 f.write(response.content)
 
         return response.status_code
+
+    def get_model_path(self):
+        return self.model_path

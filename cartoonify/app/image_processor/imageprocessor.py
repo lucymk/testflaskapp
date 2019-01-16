@@ -1,21 +1,15 @@
 import numpy as np
 import os
 import six.moves.urllib as urllib
-import tarfile
 import tensorflow as tf
 from PIL import Image
-from ..object_detection import label_map_util
-# from app.object_detection import visualization_utils as vis_util
-import logging
+from app.object_detection import label_map_util
 from pathlib import Path
 import click
+import logging
 
 
 root = Path(__file__).parent
-tensorflow_model_name = 'ssd_mobilenet_v1_coco_2017_11_17'
-model_path = root / '..' / '..' / 'downloads' / 'detection_models' / \
-    tensorflow_model_name / 'frozen_inference_graph.pb'
-
 
 class ImageProcessor(object):
     """performs object detection on an image
@@ -24,8 +18,7 @@ class ImageProcessor(object):
     def __init__(self, path_to_model, path_to_labels, model_name):
         self._model_name = model_name
         # Path to frozen detection graph. This is the actual model that is used for the object detection.
-        self._path_to_model = os.path.join(
-            path_to_model, "frozen_inference_graph.pb")
+        self._path_to_model = path_to_model
         # strings used to add correct label for each box.
         self._path_to_labels = path_to_labels
         self._download_url = 'http://download.tensorflow.org/models/object_detection/'
@@ -52,19 +45,6 @@ class ImageProcessor(object):
         # run a detection once, because first model run is always slow
         self.detect(np.ones((150, 150, 3), dtype=np.uint8))
 
-    def download_model(self, url, filename):
-        """download a model file from the url and unzip it
-        """
-        self._logger.info('downloading model: {}'.format(filename))
-        opener = urllib.request.URLopener()
-        opener.retrieve(url + filename, filename)
-        tar_file = tarfile.open(filename)
-        for file in tar_file.getmembers():
-            file_name = os.path.basename(file.name)
-            if 'frozen_inference_graph.pb' in file_name:
-                tar_file.extract(file, path=str(
-                    Path(self._path_to_model).parents[1]))
-
     def load_model(self, path):
         """load saved model from protobuf file
         """
@@ -78,19 +58,14 @@ class ImageProcessor(object):
         self._detection_graph = graph
         self._session = tf.Session(graph=self._detection_graph)
         # Definite input and output Tensors for detection_graph
-        self.image_tensor = self._detection_graph.get_tensor_by_name(
-            'image_tensor:0')
+        self.image_tensor = self._detection_graph.get_tensor_by_name('image_tensor:0')
         # Each box represents a part of the image where a particular object was detected.
-        self.detection_boxes = self._detection_graph.get_tensor_by_name(
-            'detection_boxes:0')
+        self.detection_boxes = self._detection_graph.get_tensor_by_name('detection_boxes:0')
         # Each score represent how level of confidence for each of the objects.
         # Score is shown on the result image, together with the class label.
-        self.detection_scores = self._detection_graph.get_tensor_by_name(
-            'detection_scores:0')
-        self.detection_classes = self._detection_graph.get_tensor_by_name(
-            'detection_classes:0')
-        self.num_detections = self._detection_graph.get_tensor_by_name(
-            'num_detections:0')
+        self.detection_scores = self._detection_graph.get_tensor_by_name('detection_scores:0')
+        self.detection_classes = self._detection_graph.get_tensor_by_name('detection_classes:0')
+        self.num_detections = self._detection_graph.get_tensor_by_name('num_detections:0')
 
     def load_labels(self, path):
         """load labels from .pb file, and map to a dict with integers, e.g. 1=aeroplane
@@ -116,8 +91,7 @@ class ImageProcessor(object):
         image_np_expanded = np.expand_dims(image, axis=0)
         # Actual detection.
         (self._boxes, self._scores, self._classes, num) = self._session.run(
-            [self.detection_boxes, self.detection_scores,
-                self.detection_classes, self.num_detections],
+            [self.detection_boxes, self.detection_scores, self.detection_classes, self.num_detections],
             feed_dict={self.image_tensor: image_np_expanded})
         return self._boxes, self._scores, self._classes, self._num
 

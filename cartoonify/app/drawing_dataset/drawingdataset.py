@@ -27,39 +27,12 @@ class DrawingDataset(object):
                 self._category_mapping = reader.read()
         except IOError as e:
             self._logger.exception(e)
-            print('label_mapping.jsonl not found')
+            print('label_mapping.jsonl not found at ' +
+                  self._category_mapping_filepath)
             raise e
         self._categories = self.load_categories(self._path)
         if not self._categories:
-            if click.confirm('no drawings available, would you like to download the dataset? '
-                             'download will take approx 5gb of space'):
-                self.download_recurse(self._quickdraw_dataset_url, self._path)
-                self._categories = self.load_categories(self._path)
-            else:
-                self._logger.error('no drawings available, and user declined to download dataset')
-                raise ValueError('no drawings available, please download dataset')
-
-    def download(self, url, filename, path):
-        """download file @ specified url and save it to path
-        """
-        if not Path(path).exists():
-            Path(path).mkdir()
-        fpath = Path(path) / filename
-        opener = urllib.request.URLopener()
-        opener.retrieve(url, str(fpath))
-        return fpath
-
-    def download_recurse(self, url, path):
-        """download all available files from url
-        """
-        path = Path(path)
-        with open(str(self._categories_filepath)) as f:
-            categories = f.readlines()
-        categories = [cat.strip() for cat in categories]
-        for cat in categories:
-            site = url + cat.replace(' ', '%20') + '.bin'
-            fpath = self.download(site, cat + '.bin', path)
-            print('downloaded: {} from {}'.format(fpath, site))
+            raise ValueError('no drawings available, please download dataset')
 
     def load_categories(self, path):
         files = Path(path).glob('*.bin')
@@ -109,7 +82,8 @@ class DrawingDataset(object):
                 name = self._category_mapping.get(name, 'scorpion')
             if index < 1 or not isinstance(index, int):
                 raise ValueError('index must be integer > 0')
-            itr = self.unpack_drawings(str(self._path / Path(name).with_suffix('.bin')))
+            itr = self.unpack_drawings(
+                str(self._path / Path(name).with_suffix('.bin')))
             for i in range(index):
                 drawing = next(itr)
             return drawing['image']
