@@ -15,7 +15,7 @@ Click==7.0
 configparser==3.5.0
 enum34==1.1.6
 Flask==1.0.2
-Flask-Cors==3.0.7
+Flask-Cors==3.0.9
 funcsigs==1.0.2
 futures==3.2.0
 gast==0.2.0
