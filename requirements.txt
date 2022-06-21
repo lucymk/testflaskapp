@@ -36,7 +36,7 @@ MarkupSafe==1.1.0
 mccabe==0.6.1
 mock==2.0.0
 more-itertools==4.3.0
-numpy==1.15.4
+numpy==1.22.0
 pathlib==1.0.1
 pathlib2==2.3.3
 pbr==5.1.1
