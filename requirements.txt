@@ -22,7 +22,7 @@ gast==0.2.0
 gizeh==0.1.11
 grpcio==1.17.1
 h5py==2.8.0
-html5lib==0.9999999
+html5lib==0.999999999
 idna==2.8
 isort==4.3.4
 itsdangerous==1.1.0
